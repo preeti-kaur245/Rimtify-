@@ -1,0 +1,8 @@
+{
+  "name": "rimtify",
+  "description": "A comprehensive university teacher portal for managing materials, students, schedules, and AI-powered academic assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
