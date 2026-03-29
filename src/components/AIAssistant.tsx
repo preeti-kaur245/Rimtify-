@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, User, Bot, Sparkles, X, MessageSquare } from 'lucide-react';
-import { ChatMessage } from '../types';
+import { ChatMessage, Theme } from '../types';
 import { getAIResponse } from '../services/ai';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -9,9 +9,10 @@ interface AIAssistantProps {
   anthropicKey?: string;
   materialCount: number;
   userName: string;
+  theme: Theme;
 }
 
-export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssistantProps) {
+export function AIAssistant({ anthropicKey, materialCount, userName, theme }: AIAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -65,7 +66,7 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-orange-600 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-40"
+        className="fixed bottom-6 right-6 lg:bottom-8 lg:right-8 w-14 h-14 bg-orange-600 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-40"
       >
         <Sparkles size={24} />
       </button>
@@ -76,7 +77,10 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-8 w-96 h-[600px] bg-white rounded-3xl shadow-2xl border border-zinc-200 flex flex-col overflow-hidden z-50"
+            className={cn(
+              "fixed inset-x-0 bottom-0 h-[80vh] lg:inset-auto lg:bottom-24 lg:right-8 lg:w-96 lg:h-[600px] rounded-t-[2.5rem] lg:rounded-3xl shadow-2xl border flex flex-col overflow-hidden z-50",
+              theme === 'dark' ? "bg-zinc-900 border-zinc-800" : "bg-white border-zinc-200"
+            )}
           >
             <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -93,7 +97,10 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
               </button>
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50">
+            <div ref={scrollRef} className={cn(
+              "flex-1 overflow-y-auto p-4 space-y-4",
+              theme === 'dark' ? "bg-zinc-950" : "bg-zinc-50"
+            )}>
               {messages.map((msg) => (
                 <div key={msg.id} className={cn(
                   "flex gap-3 max-w-[85%]",
@@ -101,13 +108,13 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
                 )}>
                   <div className={cn(
                     "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
-                    msg.role === 'user' ? "bg-zinc-200 text-zinc-600" : "bg-orange-100 text-orange-600"
+                    msg.role === 'user' ? (theme === 'dark' ? "bg-zinc-800 text-zinc-400" : "bg-zinc-200 text-zinc-600") : (theme === 'dark' ? "bg-orange-900/30 text-orange-400" : "bg-orange-100 text-orange-600")
                   )}>
                     {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                   </div>
                   <div className={cn(
                     "p-3 rounded-2xl text-sm shadow-sm",
-                    msg.role === 'user' ? "bg-zinc-900 text-white rounded-tr-none" : "bg-white text-zinc-800 rounded-tl-none border border-zinc-200"
+                    msg.role === 'user' ? "bg-orange-600 text-white rounded-tr-none" : (theme === 'dark' ? "bg-zinc-800 text-zinc-200 rounded-tl-none border border-zinc-700" : "bg-white text-zinc-800 rounded-tl-none border border-zinc-200")
                   )}>
                     {msg.content}
                   </div>
@@ -115,10 +122,16 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
               ))}
               {isLoading && (
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
+                  <div className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center",
+                    theme === 'dark' ? "bg-orange-900/30 text-orange-400" : "bg-orange-100 text-orange-600"
+                  )}>
                     <Bot size={16} />
                   </div>
-                  <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-zinc-200 shadow-sm">
+                  <div className={cn(
+                    "p-3 rounded-2xl rounded-tl-none border shadow-sm",
+                    theme === 'dark' ? "bg-zinc-800 border-zinc-700" : "bg-white border-zinc-200"
+                  )}>
                     <div className="flex gap-1">
                       <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce"></div>
                       <div className="w-1.5 h-1.5 bg-zinc-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
@@ -129,7 +142,10 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
               )}
             </div>
 
-            <div className="p-4 bg-white border-t border-zinc-200">
+            <div className={cn(
+              "p-4 border-t",
+              theme === 'dark' ? "bg-zinc-900 border-zinc-800" : "bg-white border-zinc-200"
+            )}>
               <div className="flex gap-2">
                 <input 
                   type="text" 
@@ -137,7 +153,10 @@ export function AIAssistant({ anthropicKey, materialCount, userName }: AIAssista
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask anything..."
-                  className="flex-1 bg-zinc-100 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-orange-500"
+                  className={cn(
+                    "flex-1 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-orange-500 border-none",
+                    theme === 'dark' ? "bg-zinc-800 text-white placeholder:text-zinc-500" : "bg-zinc-100 text-zinc-900 placeholder:text-zinc-400"
+                  )}
                 />
                 <button 
                   onClick={handleSend}

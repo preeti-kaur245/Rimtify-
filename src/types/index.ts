@@ -14,16 +14,30 @@ export interface Material {
   fileSize: string;
   uploadDate: string;
   downloadCount: number;
+  dueDate?: string; // Optional due date for assignments
 }
 
-export interface Student {
+export interface FacultyMember {
   id: string;
   name: string;
-  rollNumber: string;
+  designation: string;
+  department: string;
   email: string;
-  attendance: number; // 0-100
-  status: 'active' | 'inactive' | 'on-leave';
+  avatar?: string;
+  status: 'online' | 'offline' | 'busy';
+  bio?: string;
+  researchInterests?: string[];
 }
+
+export interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high';
+  dueDate?: string;
+}
+
+export type Theme = 'light' | 'dark';
 
 export interface ScheduleItem {
   id: string;
@@ -71,4 +85,20 @@ export interface FacultyMessage {
   role: 'faculty' | 'student';
   content: string;
   timestamp: string;
+  channelId?: string;
+  type?: 'text' | 'file' | 'image';
+  fileName?: string;
+  fileSize?: string;
+  replyTo?: string;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  content: string;
+  type: 'announcement' | 'deadline' | 'system';
+  priority: 'high' | 'medium' | 'low';
+  timestamp: string;
+  read: boolean;
+  link?: string;
 }
